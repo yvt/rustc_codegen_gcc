@@ -76,8 +76,9 @@ pub fn compile_codegen_unit<'tcx>(tcx: TyCtxt<'tcx>, cgu_name: Symbol, supports_
         // Instantiate monomorphizations without filling out definitions yet...
         //let llvm_module = ModuleLlvm::new(tcx, &cgu_name.as_str());
         let context = Context::default();
-        // TODO(antoyo): only set on x86 platforms.
-        context.add_command_line_option("-masm=intel");
+        // `double` are interpreted as IEEE754 binary32 by default, so we need to
+        // change that
+        context.add_command_line_option("-m64bit-doubles");
         for arg in &tcx.sess.opts.cg.llvm_args {
             context.add_command_line_option(arg);
         }

@@ -9,6 +9,7 @@ else
     exit 1
 fi
 
+
 unamestr=`uname`
 if [[ "$unamestr" == 'Linux' ]]; then
    dylib_ext='so'
@@ -22,6 +23,7 @@ fi
 HOST_TRIPLE=$(rustc -vV | grep host | cut -d: -f2 | tr -d " ")
 TARGET_TRIPLE=$HOST_TRIPLE
 #TARGET_TRIPLE="m68k-unknown-linux-gnu"
+TARGET_TRIPLE="rx-elf"
 
 linker=''
 RUN_WRAPPER=''
@@ -29,6 +31,10 @@ if [[ "$HOST_TRIPLE" != "$TARGET_TRIPLE" ]]; then
    if [[ "$TARGET_TRIPLE" == "m68k-unknown-linux-gnu" ]]; then
        TARGET_TRIPLE="mips-unknown-linux-gnu"
        linker='-Clinker=m68k-linux-gcc'
+   elif [[ "$TARGET_TRIPLE" == "rx-elf" ]]; then
+       TARGET_TRIPLE="mips-unknown-linux-gnu"
+       linker='-Clinker=rx-elf-gcc'
+       export CC_${TARGET_TRIPLE//-/_}="rx-elf-gcc"
    elif [[ "$TARGET_TRIPLE" == "aarch64-unknown-linux-gnu" ]]; then
       # We are cross-compiling for aarch64. Use the correct linker and run tests in qemu.
       linker='-Clinker=aarch64-linux-gnu-gcc'
