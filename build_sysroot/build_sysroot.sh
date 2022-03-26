@@ -15,11 +15,19 @@ rm -r target/*/{debug,release}/{build,deps,examples,libsysroot*,native} 2>/dev/n
 rm Cargo.lock test_target/Cargo.lock 2>/dev/null || true
 rm -r sysroot/ 2>/dev/null || true
 
+target_triple_upper="$(echo "$TARGET_TRIPLE" | tr '[:lower:]-' '[:upper:]_')"
+
+rustflags_extra='-Z force-unstable-if-unmarked -Cpanic=abort'
+if [[ "$1" == "--release" ]]; then
+    rustflags_extra="$rustflags_extra -Zmir-opt-level=3"
+fi
+
+eval 'export CARGO_TARGET_${target_triple_upper}_RUSTFLAGS="$CARGO_TARGET_'${target_triple_upper}'_RUSTFLAGS $rustflags_extra"'
+
 # Build libs
-export RUSTFLAGS="$RUSTFLAGS -Z force-unstable-if-unmarked -Cpanic=abort"
 if [[ "$1" == "--release" ]]; then
     sysroot_channel='release'
-    RUSTFLAGS="$RUSTFLAGS -Zmir-opt-level=3" cargo build --target $TARGET_TRIPLE --release
+    cargo build --target $TARGET_TRIPLE --release
 else
     sysroot_channel='debug'
     cargo build --target $TARGET_TRIPLE --features compiler_builtins/c
