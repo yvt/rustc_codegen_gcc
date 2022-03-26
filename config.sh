@@ -44,17 +44,21 @@ if [[ "$HOST_TRIPLE" != "$TARGET_TRIPLE" ]]; then
    fi
 fi
 
+target_triple_upper="$(echo "$TARGET_TRIPLE" | tr '[:lower:]-' '[:upper:]_')"
+
 codegen_dylib="$(pwd)/target/${CHANNEL:-debug}/librustc_codegen_gcc.$dylib_ext"
-export RUSTFLAGS="$CG_RUSTFLAGS $linker -Cpanic=abort -Csymbol-mangling-version=v0 -Cdebuginfo=2 -Clto=off -Zpanic-abort-tests -Zcodegen-backend=$codegen_dylib --sysroot $(pwd)/build_sysroot/sysroot"
+rustflags="$CG_RUSTFLAGS $linker -Cpanic=abort -Csymbol-mangling-version=v0 -Cdebuginfo=2 -Clto=off -Zpanic-abort-tests -Zcodegen-backend=$codegen_dylib --sysroot $(pwd)/build_sysroot/sysroot"
 export LD_PRELOAD="$codegen_dylib${LD_PRELOAD:+:}$LD_PRELOAD"
 
 # FIXME(antoyo): remove once the atomic shim is gone
 if [[ `uname` == 'Darwin' ]]; then
-   export RUSTFLAGS="$RUSTFLAGS -Clink-arg=-undefined -Clink-arg=dynamic_lookup"
+   rustflags="$rustflags -Clink-arg=-undefined -Clink-arg=dynamic_lookup"
 fi
 
-RUSTC="rustc $RUSTFLAGS -L crate=target/out --out-dir target/out"
+RUSTC="rustc $rustflags -L crate=target/out --out-dir target/out"
 export RUSTC_LOG=warn # display metadata load errors
+
+export CARGO_TARGET_${target_triple_upper}_RUSTFLAGS="$rustflags"
 
 export LD_LIBRARY_PATH="$(pwd)/target/out:$(pwd)/build_sysroot/sysroot/lib/rustlib/$TARGET_TRIPLE/lib:$GCC_PATH"
 export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH
