@@ -9,6 +9,7 @@ else
     exit 1
 fi
 
+
 unamestr=`uname`
 if [[ "$unamestr" == 'Linux' ]]; then
    dylib_ext='so'
@@ -22,6 +23,7 @@ fi
 HOST_TRIPLE=$(rustc -vV | grep host | cut -d: -f2 | tr -d " ")
 TARGET_TRIPLE=$HOST_TRIPLE
 #TARGET_TRIPLE="m68k-unknown-linux-gnu"
+TARGET_TRIPLE="rx-none-elf"
 
 linker=''
 RUN_WRAPPER=''

@@ -76,13 +76,9 @@ pub fn compile_codegen_unit<'tcx>(tcx: TyCtxt<'tcx>, cgu_name: Symbol, supports_
         // Instantiate monomorphizations without filling out definitions yet...
         //let llvm_module = ModuleLlvm::new(tcx, &cgu_name.as_str());
         let context = Context::default();
-        // TODO(antoyo): only set on x86 platforms.
-        context.add_command_line_option("-masm=intel");
-        // TODO(antoyo): only add the following cli argument if the feature is supported.
-        context.add_command_line_option("-msse2");
-        context.add_command_line_option("-mavx2");
-        context.add_command_line_option("-msha");
-        context.add_command_line_option("-mpclmul");
+        // `double` are interpreted as IEEE754 binary32 by default, so we need to
+        // change that
+        context.add_command_line_option("-m64bit-doubles");
         // FIXME(antoyo): the following causes an illegal instruction on vmovdqu64 in std_example on my CPU.
         // Only add if the CPU supports it.
         //context.add_command_line_option("-mavx512f");
