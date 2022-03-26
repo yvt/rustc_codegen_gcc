@@ -151,13 +151,13 @@ impl<'gcc, 'tcx> CodegenCx<'gcc, 'tcx> {
         let ulonglong_type = context.new_c_type(CType::ULongLong);
         let sizet_type = context.new_c_type(CType::SizeT);
 
-        let isize_type = context.new_c_type(CType::LongLong);
-        let usize_type = context.new_c_type(CType::ULongLong);
+        let isize_type = context.new_c_type(CType::Long);
+        let usize_type = context.new_c_type(CType::ULong);
         let bool_type = context.new_type::<bool>();
 
         // TODO(antoyo): only have those assertions on x86_64.
-        assert_eq!(isize_type.get_size(), i64_type.get_size());
-        assert_eq!(usize_type.get_size(), u64_type.get_size());
+        assert_eq!(isize_type.get_size(), i32_type.get_size());
+        assert_eq!(usize_type.get_size(), u32_type.get_size());
 
         let mut functions = FxHashMap::default();
         let builtins = [
