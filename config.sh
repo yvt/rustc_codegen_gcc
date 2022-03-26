@@ -44,7 +44,9 @@ if [[ "$HOST_TRIPLE" != "$TARGET_TRIPLE" ]]; then
    fi
 fi
 
-export RUSTFLAGS="$CG_RUSTFLAGS $linker -Cpanic=abort -Csymbol-mangling-version=v0 -Cdebuginfo=2 -Clto=off -Zpanic-abort-tests -Zcodegen-backend=$(pwd)/target/${CHANNEL:-debug}/librustc_codegen_gcc.$dylib_ext --sysroot $(pwd)/build_sysroot/sysroot"
+codegen_dylib="$(pwd)/target/${CHANNEL:-debug}/librustc_codegen_gcc.$dylib_ext"
+export RUSTFLAGS="$CG_RUSTFLAGS $linker -Cpanic=abort -Csymbol-mangling-version=v0 -Cdebuginfo=2 -Clto=off -Zpanic-abort-tests -Zcodegen-backend=$codegen_dylib --sysroot $(pwd)/build_sysroot/sysroot"
+export LD_PRELOAD="$codegen_dylib${LD_PRELOAD:+:}$LD_PRELOAD"
 
 # FIXME(antoyo): remove once the atomic shim is gone
 if [[ `uname` == 'Darwin' ]]; then
