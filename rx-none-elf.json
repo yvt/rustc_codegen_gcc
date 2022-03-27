@@ -11,5 +11,6 @@
   "max-atomic-width": 32,
   "panic-strategy": "abort",
   "relocation-model": "static",
-  "target-pointer-width": "32"
+  "target-pointer-width": "32",
+  "eh-frame-header": false
 }
