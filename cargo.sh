@@ -20,4 +20,4 @@ fi
 cmd=$1
 shift
 
-RUSTDOCFLAGS="$RUSTFLAGS" cargo +${TOOLCHAIN} $cmd $@
+RUSTDOCFLAGS="$RUSTFLAGS" cargo +${TOOLCHAIN} $cmd --target "$TARGET_SPEC" $@
