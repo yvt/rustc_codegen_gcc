@@ -34,7 +34,6 @@ if [[ "$HOST_TRIPLE" != "$TARGET_TRIPLE" ]]; then
    elif [[ "$TARGET_TRIPLE" == "rx-elf" ]]; then
        TARGET_TRIPLE="rx-none-elf"
        TARGET_SPEC="$(pwd)/rx-none-elf.json"
-       linker='-Clinker=rx-elf-gcc'
        export CC_${TARGET_TRIPLE//-/_}="rx-elf-gcc"
    elif [[ "$TARGET_TRIPLE" == "aarch64-unknown-linux-gnu" ]]; then
       # We are cross-compiling for aarch64. Use the correct linker and run tests in qemu.
