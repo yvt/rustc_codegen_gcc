@@ -53,7 +53,7 @@ target_triple_upper="$(echo "$TARGET_TRIPLE" | tr '[:lower:]-' '[:upper:]_')"
 
 codegen_dylib="$(pwd)/target/${CHANNEL:-debug}/librustc_codegen_gcc.$dylib_ext"
 rustflags="$linker -Cpanic=abort -Csymbol-mangling-version=v0 -Cdebuginfo=2 -Clto=off -Zpanic-abort-tests -Zcodegen-backend=$codegen_dylib --sysroot $(pwd)/build_sysroot/sysroot"
-export LD_PRELOAD="$codegen_dylib${LD_PRELOAD:+:}$LD_PRELOAD"
+export LD_PRELOAD="$GCC_PATH/libgccjit.so${LD_PRELOAD:+:}$LD_PRELOAD"
 
 # FIXME(antoyo): remove once the atomic shim is gone
 if [[ `uname` == 'Darwin' ]]; then
