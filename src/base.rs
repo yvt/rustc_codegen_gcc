@@ -83,7 +83,12 @@ pub fn compile_codegen_unit<'tcx>(tcx: TyCtxt<'tcx>, cgu_name: Symbol, supports_
         // Only add if the CPU supports it.
         //context.add_command_line_option("-mavx512f");
         for arg in &tcx.sess.opts.cg.llvm_args {
-            context.add_command_line_option(arg);
+            if arg.starts_with("-Wa,") {
+                context.add_driver_option(arg);
+            }
+            else {
+                context.add_command_line_option(arg);
+            }
         }
         // NOTE: This is needed to compile the file src/intrinsic/archs.rs during a bootstrap of rustc.
         context.add_command_line_option("-fno-var-tracking-assignments");
