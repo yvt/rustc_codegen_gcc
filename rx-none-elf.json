@@ -5,8 +5,12 @@
   "emit-debug-gdb-scripts": false,
   "executables": true,
   "frame-pointer": "always",
-  "linker": "rx-elf-ld",
-  "linker-flavor": "ld",
+  "linker": "rx-elf-gcc",
+  "linker-flavor": "gcc",
+  "crt-objects-fallback": "wasm",
+  "post-link-args": {
+    "gcc": ["-lgcc"]
+  },
   "llvm-target": "thumbv7m-none-eabi",
   "max-atomic-width": 32,
   "panic-strategy": "abort",
