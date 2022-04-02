@@ -29,6 +29,10 @@ if [[ "$HOST_TRIPLE" != "$TARGET_TRIPLE" ]]; then
    if [[ "$TARGET_TRIPLE" == "m68k-unknown-linux-gnu" ]]; then
        TARGET_TRIPLE="mips-unknown-linux-gnu"
        linker='-Clinker=m68k-linux-gcc'
+   elif [[ "$TARGET_TRIPLE" == "rx-none-elf" ]]; then
+       TARGET_TRIPLE="rx-none-elf"
+       TARGET_SPEC="$(pwd)/rx-none-elf.json"
+       export CC_${TARGET_TRIPLE//-/_}="rx-none-elf-gcc"
    elif [[ "$TARGET_TRIPLE" == "aarch64-unknown-linux-gnu" ]]; then
       # We are cross-compiling for aarch64. Use the correct linker and run tests in qemu.
       linker='-Clinker=aarch64-linux-gnu-gcc'
@@ -37,6 +41,11 @@ if [[ "$HOST_TRIPLE" != "$TARGET_TRIPLE" ]]; then
       echo "Unknown non-native platform"
    fi
 fi
+
+if [ -z "$TARGET_SPEC" ]; then
+   TARGET_SPEC="$TARGET_TRIPLE"
+fi
+export TARGET_SPEC
 
 target_triple_upper="$(echo "$TARGET_TRIPLE" | tr '[:lower:]-' '[:upper:]_')"
 

@@ -27,10 +27,10 @@ eval 'export CARGO_TARGET_${target_triple_upper}_RUSTFLAGS="$CARGO_TARGET_'${tar
 # Build libs
 if [[ "$1" == "--release" ]]; then
     sysroot_channel='release'
-    cargo build --target $TARGET_TRIPLE --release
+    cargo build --target $TARGET_SPEC --release
 else
     sysroot_channel='debug'
-    cargo build --target $TARGET_TRIPLE --features compiler_builtins/c
+    cargo build --target $TARGET_SPEC --features compiler_builtins/c
 fi
 
 # Copy files to sysroot
