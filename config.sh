@@ -51,9 +51,7 @@ export TARGET_SPEC
 
 target_triple_upper="$(echo "$TARGET_TRIPLE" | tr '[:lower:]-' '[:upper:]_')"
 
-codegen_dylib="$(pwd)/target/${CHANNEL:-debug}/librustc_codegen_gcc.$dylib_ext"
-rustflags="$CG_RUSTFLAGS $linker -Cpanic=abort -Csymbol-mangling-version=v0 -Cdebuginfo=2 -Clto=off -Zpanic-abort-tests -Zcodegen-backend=$codegen_dylib --sysroot $(pwd)/build_sysroot/sysroot"
-export LD_PRELOAD="$GCC_PATH/libgccjit.so${LD_PRELOAD:+:}$LD_PRELOAD"
+rustflags="$CG_RUSTFLAGS $linker -Cpanic=abort -Csymbol-mangling-version=v0 -Cdebuginfo=2 -Clto=off -Zpanic-abort-tests -Zcodegen-backend=$(pwd)/target/${CHANNEL:-debug}/librustc_codegen_gcc.$dylib_ext --sysroot $(pwd)/build_sysroot/sysroot"
 
 # FIXME(antoyo): remove once the atomic shim is gone
 if [[ `uname` == 'Darwin' ]]; then
