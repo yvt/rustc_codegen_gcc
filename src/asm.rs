@@ -553,6 +553,8 @@ fn reg_to_gcc(reg: InlineAsmRegOrRegClass) -> ConstraintOrRegister {
                     });
                 }
 
+                InlineAsmReg::Mips(_) => return ConstraintOrRegister::Register(reg.name()),
+
                 _ => unimplemented!(),
             }
         },
@@ -573,8 +575,8 @@ fn reg_to_gcc(reg: InlineAsmRegOrRegClass) -> ConstraintOrRegister {
             InlineAsmRegClass::Avr(_) => unimplemented!(),
             InlineAsmRegClass::Bpf(_) => unimplemented!(),
             InlineAsmRegClass::Hexagon(HexagonInlineAsmRegClass::reg) => unimplemented!(),
-            InlineAsmRegClass::Mips(MipsInlineAsmRegClass::reg) => unimplemented!(),
-            InlineAsmRegClass::Mips(MipsInlineAsmRegClass::freg) => unimplemented!(),
+            InlineAsmRegClass::Mips(MipsInlineAsmRegClass::reg) => "r",
+            InlineAsmRegClass::Mips(MipsInlineAsmRegClass::freg) => "f",
             InlineAsmRegClass::Msp430(_) => unimplemented!(),
             InlineAsmRegClass::Nvptx(NvptxInlineAsmRegClass::reg16) => unimplemented!(),
             InlineAsmRegClass::Nvptx(NvptxInlineAsmRegClass::reg32) => unimplemented!(),
@@ -745,7 +747,11 @@ fn modifier_to_gcc(arch: InlineAsmArch, reg: InlineAsmRegClass, modifier: Option
         InlineAsmRegClass::Avr(_) => unimplemented!(),
         InlineAsmRegClass::Bpf(_) => unimplemented!(),
         InlineAsmRegClass::Hexagon(_) => unimplemented!(),
-        InlineAsmRegClass::Mips(_) => unimplemented!(),
+        InlineAsmRegClass::Mips(MipsInlineAsmRegClass::reg) |
+        InlineAsmRegClass::Mips(MipsInlineAsmRegClass::freg) => match modifier {
+            None => None,
+            _ => unreachable!(),
+        },
         InlineAsmRegClass::Msp430(_) => unimplemented!(),
         InlineAsmRegClass::Nvptx(_) => unimplemented!(),
         InlineAsmRegClass::PowerPC(_) => unimplemented!(),
