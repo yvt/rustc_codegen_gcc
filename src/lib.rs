@@ -51,7 +51,7 @@ mod type_of;
 use std::any::Any;
 use std::sync::{Arc, Mutex};
 
-use gccjit::{Context, OptimizationLevel, CType};
+use gccjit::{Context, CType};
 use rustc_ast::expand::allocator::AllocatorKind;
 use rustc_codegen_ssa::{CodegenResults, CompiledModule, ModuleCodegen};
 use rustc_codegen_ssa::base::codegen_crate;
@@ -225,7 +225,7 @@ impl WriteBackendMethods for GccCodegenBackend {
     }
 
     unsafe fn optimize(_cgcx: &CodegenContext<Self>, _diag_handler: &Handler, module: &ModuleCodegen<Self::Module>, config: &ModuleConfig) -> Result<(), FatalError> {
-        module.module_llvm.context.set_optimization_level(to_gcc_opt_level(config.opt_level));
+        module.module_llvm.context.add_command_line_option(to_gcc_opt_level(config.opt_level));
         Ok(())
     }
 
@@ -263,16 +263,17 @@ pub fn __rustc_codegen_backend() -> Box<dyn CodegenBackend> {
     })
 }
 
-fn to_gcc_opt_level(optlevel: Option<OptLevel>) -> OptimizationLevel {
+fn to_gcc_opt_level(optlevel: Option<OptLevel>) -> &'static str {
     match optlevel {
-        None => OptimizationLevel::None,
+        None => "-O0",
         Some(level) => {
             match level {
-                OptLevel::No => OptimizationLevel::None,
-                OptLevel::Less => OptimizationLevel::Limited,
-                OptLevel::Default => OptimizationLevel::Standard,
-                OptLevel::Aggressive => OptimizationLevel::Aggressive,
-                OptLevel::Size | OptLevel::SizeMin => OptimizationLevel::Limited,
+                OptLevel::No => "-O0",
+                OptLevel::Less => "-O1",
+                OptLevel::Default => "-O2",
+                OptLevel::Aggressive => "-O3",
+                OptLevel::Size => "-Os",
+                OptLevel::SizeMin => "-Oz",
             }
         },
     }
